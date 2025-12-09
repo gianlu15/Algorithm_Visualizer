@@ -1,3 +1,11 @@
 # window dimension
 WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 800
+
+# grid dimension
+GRID_ROWS = 25
+GRID_COLS = 25
+
+# cell dimension
+CELL_WIDTH = WINDOW_WIDTH // GRID_COLS
+CELL_HEIGHT = WINDOW_HEIGHT // GRID_ROWS

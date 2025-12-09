@@ -1,5 +1,6 @@
 import pygame
 from config import WINDOW_WIDTH, WINDOW_HEIGHT
+from grid import Grid
 
 def main():
     pygame.init()
@@ -10,12 +11,16 @@ def main():
     clock = pygame.time.Clock()
     running = True
 
+    grid = Grid()
+
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
 
         screen.fill("purple")
+        grid.draw(screen)
+
         pygame.display.flip()
         clock.tick(60)  
 
