@@ -1,7 +1,7 @@
 import pygame
 from config import WINDOW_WIDTH, WINDOW_HEIGHT, COLOR_BG
 from grid import Grid
-from algorithms import bfs_find_path
+from algorithms import BFSAnimator
 
 
 def main():
@@ -14,6 +14,8 @@ def main():
     running = True
 
     grid = Grid()
+    
+    bfs_animator: BFSAnimator | None = None
 
     while running:
         for event in pygame.event.get():
@@ -21,19 +23,19 @@ def main():
                 running = False
             
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_BACKSPACE:
+                
+               # start 
+               if event.key == pygame.K_SPACE:
+                    bfs_animator = BFSAnimator(grid)
+                    bfs_animator.start_search()
+                 
+               # reset   
+               elif event.key == pygame.K_r:
                     grid.reset_search_state()
-
-                if event.key == pygame.K_SPACE:
-                    grid.reset_search_state()
-
-                    path = bfs_find_path(grid)
-
-                    # color path
-                    for (cell_row, cell_column) in path:
-                        cell = grid.cells[cell_row][cell_column]
-                        cell.in_path = True
-                        cell.is_visited = True 
+                    bfs_animator = None
+                
+        if bfs_animator is not None and not bfs_animator.finished:
+            bfs_animator.step()
 
         screen.fill(COLOR_BG)
         grid.draw(screen)
