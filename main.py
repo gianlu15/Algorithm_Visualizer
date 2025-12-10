@@ -1,7 +1,7 @@
 import pygame
 from config import WINDOW_WIDTH, WINDOW_HEIGHT, COLOR_BG
 from grid import Grid
-from algorithms import BFSAnimator
+from algorithms import BFSAnimator, DFSAnimator
 
 
 def main():
@@ -16,6 +16,8 @@ def main():
     grid = Grid()
     
     bfs_animator: BFSAnimator | None = None
+    dfs_animator: DFSAnimator | None = None
+
 
     while running:
         for event in pygame.event.get():
@@ -24,12 +26,17 @@ def main():
             
             elif event.type == pygame.KEYDOWN:
                 
-               # start 
-               if event.key == pygame.K_SPACE:
+               # press B to watch BFS 
+               if event.key == pygame.K_b:
                     bfs_animator = BFSAnimator(grid)
                     bfs_animator.start_search()
+                
+                # press D to watch DFS 
+               elif event.key == pygame.K_d:
+                    bfs_animator = DFSAnimator(grid)
+                    bfs_animator.start_search()
                  
-               # reset   
+               # press R to reset   
                elif event.key == pygame.K_r:
                     grid.reset_search_state()
                     bfs_animator = None
