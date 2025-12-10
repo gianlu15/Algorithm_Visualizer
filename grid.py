@@ -1,12 +1,22 @@
 import pygame
-from config import GRID_COLS, GRID_ROWS, CELL_HEIGHT, CELL_WIDTH
+from config import GRID_COLS, GRID_ROWS, CELL_HEIGHT, CELL_WIDTH, COLOR_GRID_LINES, COLOR_CELL_EMPTY, COLOR_CELL_PATH, COLOR_CELL_START, COLOR_CELL_END, COLOR_CELL_WALL,COLOR_CELL_FRONTIER,COLOR_CELL_VISITED
+from typing import List, Tuple
 
 
 class Cell:
     def __init__(self, row: int, col: int):
         self.row = row
         self.col = col
+        
+        # maze structure
         self.is_wall = False
+        
+        # pathfinding
+        self.is_start = False
+        self.is_end = False
+        self.is_visited = False
+        self.in_frontier = False
+        self.in_path = False
 
     @property
     def rect(self) -> pygame.Rect:
@@ -14,10 +24,31 @@ class Cell:
         y = self.row * CELL_HEIGHT
         return pygame.Rect(x, y, CELL_WIDTH, CELL_HEIGHT)
 
+    
+    def reset_cell_search_state(self) -> None:
+        self.is_visited = False
+        self.in_frontier = False
+        self.in_path = False
+    
+
     def draw(self, surface: pygame.Surface) -> None:
-        color = "gray"
-        if self.is_wall:
-            color = "blue"
+        color = COLOR_CELL_EMPTY
+      
+         # path > start/end > wall > visited/frontier > empty
+        if self.in_path:
+            color = COLOR_CELL_PATH
+        elif self.is_start:
+            color = COLOR_CELL_START
+        elif self.is_end:
+            color = COLOR_CELL_END
+        elif self.is_wall:
+            color = COLOR_CELL_WALL
+        elif self.in_frontier:
+            color = COLOR_CELL_FRONTIER
+        elif self.is_visited:
+            color = COLOR_CELL_VISITED
+        else:
+            color = COLOR_CELL_EMPTY
         pygame.draw.rect(surface, color, self.rect)
 
 
@@ -33,6 +64,22 @@ class Grid:
             for c in range(cols):
                 row.append(Cell(r, c))
             self.cells.append(row)
+        
+        # fixed start and ending
+        self.start = (0, 0)
+        self.end = (rows - 5, cols - 2)
+        self._apply_start_end()
+
+    def _apply_start_end(self) -> None:
+        sr, sc = self.start
+        er, ec = self.end
+        self.cells[sr][sc].is_start = True
+        self.cells[er][ec].is_end = True
+        
+    def reset_search_state(self) -> None:
+        for row in self.cells:
+            for cell in row:
+                cell.reset_cell_search_state()
 
 
     def draw(self, surface: pygame.Surface) -> None:
@@ -47,7 +94,7 @@ class Grid:
             x = c * CELL_WIDTH
             pygame.draw.line(
                 surface,
-                "green",
+                COLOR_GRID_LINES,
                 (x, 0),
                 (x, self.rows * CELL_HEIGHT),
                 1,
@@ -57,8 +104,21 @@ class Grid:
             y = r * CELL_HEIGHT
             pygame.draw.line(
                 surface,
-                "green",
+                COLOR_GRID_LINES,
                 (0, y),
                 (self.cols * CELL_WIDTH, y),
                 1,
             )
+    
+    # find neighbors (up/down/right/left) which are not walls
+    def neighbors(self, r: int, c: int) -> List[Tuple[int, int]]:
+        result: List[Tuple[int, int]] = []
+        directions = [(0, 1), (1, 0), (-1, 0), (0, 1)]
+
+        for dr, dc in directions:
+            nr, nc = r + dr, c + dc
+            if 0 <= nr < self.rows and 0 <= nc < self.cols:
+                if not self.cells[nr][nc].is_wall:
+                    result.append((nr, nc))
+
+        return result
