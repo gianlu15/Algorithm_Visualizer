@@ -52,6 +52,7 @@ class Cell:
         pygame.draw.rect(surface, color, self.rect)
 
 
+
 class Grid:
     def __init__(self, rows: int = GRID_ROWS, cols: int = GRID_COLS):
         self.rows = rows
@@ -122,3 +123,26 @@ class Grid:
                     result.append((nr, nc))
 
         return result
+    
+    
+    def trasform_to_wall(self, x: int, y: int) -> None:
+        col = x // CELL_WIDTH
+        row = y // CELL_HEIGHT
+        
+        # check if its in the grid
+        if not (0 <= row < self.rows and 0 <= col < self.cols):
+            return
+
+        cell = self.cells[row][col]
+
+        # check if its not start or end
+        if cell.is_start or cell.is_end:
+            return
+        
+        cell.is_wall = True
+     
+        
+    def clear_walls(self) -> None:
+        for row in self.cells:
+            for cell in row:
+                cell.is_wall = False
