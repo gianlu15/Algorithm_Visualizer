@@ -1,8 +1,15 @@
 import pygame
+
+from typing import Union
 from config import WINDOW_WIDTH, WINDOW_HEIGHT, COLOR_BG
 from grid import Grid
 from algorithms import BFSAnimator, DFSAnimator
 
+Animator = Union[BFSAnimator, DFSAnimator]
+
+def stop_animation(grid: Grid, animator: Animator | None) -> Animator | None:
+    grid.reset_search_state()
+    return None
 
 def main():
     pygame.init()
@@ -15,9 +22,7 @@ def main():
 
     grid = Grid()
     
-    bfs_animator: BFSAnimator | None = None
-    dfs_animator: DFSAnimator | None = None
-
+    animator: Animator | None = None
 
     while running:
         for event in pygame.event.get():
@@ -27,16 +32,18 @@ def main():
                 
     
              # trasform cells to wall
-            elif event.type == pygame.MOUSEMOTION:
+            elif event.type == pygame.MOUSEMOTION:              
                 x, y = event.pos      
                 buttons = event.buttons
                 
                 if buttons[0]:
+                    animator = stop_animation(grid, animator)
                     grid.trasform_to_wall(x,y)
 
                 
             # trasform cells to wall
             elif event.type == pygame.MOUSEBUTTONDOWN:
+                animator = stop_animation(grid, animator)
                 x, y = event.pos
                 grid.trasform_to_wall(x,y)
                 
@@ -45,30 +52,26 @@ def main():
                 
                # press B to watch BFS 
                if event.key == pygame.K_b:
-                    bfs_animator = BFSAnimator(grid)
-                    bfs_animator.start_search()
+                    animator = BFSAnimator(grid)
+                    animator.start_search()
                 
                 # press D to watch DFS 
                elif event.key == pygame.K_d:
-                    dfs_animator = DFSAnimator(grid)
-                    dfs_animator.start_search()
+                    animator = DFSAnimator(grid)
+                    animator.start_search()
                  
                # press R to reset   
                elif event.key == pygame.K_r:
-                    grid.reset_search_state()
-                    bfs_animator = None
-                    dfs_animator = None
+                    animator = stop_animation(grid, animator)
                 
                 # press W to reset walls   
                elif event.key == pygame.K_w:
                     grid.clear_walls()
+                    animator = stop_animation(grid, animator)
                 
                 
-        if bfs_animator is not None and not bfs_animator.finished:
-            bfs_animator.step()
-        
-        if dfs_animator is not None and not dfs_animator.finished:
-            dfs_animator.step()
+        if animator is not None and not animator.finished:
+            animator.step()
 
         screen.fill(COLOR_BG)
         grid.draw(screen)
@@ -77,6 +80,7 @@ def main():
         clock.tick(60)  
 
     pygame.quit()
+    
 
 if __name__ == "__main__":
     main()
