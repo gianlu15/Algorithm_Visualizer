@@ -1,6 +1,21 @@
 import pygame
 import random
-from config import GRID_COLS, GRID_ROWS, CELL_HEIGHT, CELL_WIDTH, COLOR_GRID_LINES, COLOR_CELL_EMPTY, COLOR_CELL_PATH, COLOR_CELL_START, COLOR_CELL_END, COLOR_CELL_WALL,COLOR_CELL_FRONTIER,COLOR_CELL_VISITED
+from config import (
+    GRID_ROWS,
+    GRID_COLS,
+    CELL_WIDTH,
+    CELL_HEIGHT,
+    GRID_TOP,
+    GRID_LEFT,
+    COLOR_GRID_LINES,
+    COLOR_CELL_EMPTY,
+    COLOR_CELL_WALL,
+    COLOR_CELL_START,
+    COLOR_CELL_END,
+    COLOR_CELL_VISITED,
+    COLOR_CELL_FRONTIER,
+    COLOR_CELL_PATH,
+)
 from typing import List, Tuple
 
 
@@ -21,8 +36,8 @@ class Cell:
 
     @property
     def rect(self) -> pygame.Rect:
-        x = self.col * CELL_WIDTH
-        y = self.row * CELL_HEIGHT
+        x = GRID_LEFT + self.col * CELL_WIDTH
+        y = GRID_TOP + self.row * CELL_HEIGHT
         return pygame.Rect(x, y, CELL_WIDTH, CELL_HEIGHT)
 
     
@@ -69,7 +84,7 @@ class Grid:
         
         # fixed start and ending
         self.start = (0, 0)
-        self.end = (rows - 5, cols - 2)
+        self.end = (rows - 1, cols - 1)
         self._apply_start_end()
 
     def _apply_start_end(self) -> None:
@@ -93,22 +108,23 @@ class Grid:
 
         # draw lines
         for c in range(self.cols + 1):
-            x = c * CELL_WIDTH
+            x = GRID_LEFT + c * CELL_WIDTH
             pygame.draw.line(
                 surface,
                 COLOR_GRID_LINES,
-                (x, 0),
-                (x, self.rows * CELL_HEIGHT),
+                (x, GRID_TOP),
+                (x, GRID_TOP + self.rows * CELL_HEIGHT),
                 1,
             )
 
+        # linee orizzontali
         for r in range(self.rows + 1):
-            y = r * CELL_HEIGHT
+            y = GRID_TOP + r * CELL_HEIGHT
             pygame.draw.line(
                 surface,
                 COLOR_GRID_LINES,
-                (0, y),
-                (self.cols * CELL_WIDTH, y),
+                (GRID_LEFT, y),
+                (GRID_LEFT + self.cols * CELL_WIDTH, y),
                 1,
             )
     
@@ -126,9 +142,12 @@ class Grid:
         return result
     
     
-    def trasform_to_wall(self, x: int, y: int) -> None:
-        col = x // CELL_WIDTH
-        row = y // CELL_HEIGHT
+    def transform_to_wall(self, x: int, y: int) -> None:
+        if y < GRID_TOP:
+            return
+
+        col = (x - GRID_LEFT) // CELL_WIDTH
+        row = (y - GRID_TOP) // CELL_HEIGHT
         
         # check if its in the grid
         if not (0 <= row < self.rows and 0 <= col < self.cols):
