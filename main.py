@@ -63,6 +63,11 @@ def main():
                # press R to reset   
                elif event.key == pygame.K_r:
                     animator = stop_animation(grid, animator)
+                    
+               # press G to generate walls   
+               elif event.key == pygame.K_g:
+                    grid.generate_walls()
+                    animator = stop_animation(grid, animator)
                 
                 # press W to reset walls   
                elif event.key == pygame.K_w:

@@ -1,4 +1,5 @@
 import pygame
+import random
 from config import GRID_COLS, GRID_ROWS, CELL_HEIGHT, CELL_WIDTH, COLOR_GRID_LINES, COLOR_CELL_EMPTY, COLOR_CELL_PATH, COLOR_CELL_START, COLOR_CELL_END, COLOR_CELL_WALL,COLOR_CELL_FRONTIER,COLOR_CELL_VISITED
 from typing import List, Tuple
 
@@ -114,7 +115,7 @@ class Grid:
     # find neighbors (up/down/right/left) which are not walls
     def neighbors(self, r: int, c: int) -> List[Tuple[int, int]]:
         result: List[Tuple[int, int]] = []
-        directions = [(0, 1), (1, 0), (-1, 0), (0, 1)]
+        directions = [(0, 1), (1, 0), (-1, 0), (0, -1)]
 
         for dr, dc in directions:
             nr, nc = r + dr, c + dc
@@ -146,3 +147,10 @@ class Grid:
         for row in self.cells:
             for cell in row:
                 cell.is_wall = False
+                
+    def generate_walls(self) -> None:
+        self.clear_walls()
+        for row in self.cells:
+            for cell in row:
+                if not (cell.is_start or cell.is_end):
+                    cell.is_wall = random.random() < 0.3

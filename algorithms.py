@@ -166,4 +166,3 @@ class DFSAnimator:
             cell = self.grid.cells[r][c]
             cell.in_path = True
             cur = self.parent.get(cur)
-
