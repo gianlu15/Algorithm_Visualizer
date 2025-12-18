@@ -89,7 +89,7 @@ def main() -> None:
                             animator = DFSAnimator(grid)
                             animator.start_search()
 
-                        elif label == "Generate":
+                        elif label == "Generate walls":
                             grid.generate_walls()
                             animator = stop_animation(grid, animator)
 
@@ -123,7 +123,7 @@ def main() -> None:
         )
 
         for b in buttons:
-            b.draw(screen, font)
+            b.draw(screen, font, b.text)
 
         grid.draw(screen)
 
