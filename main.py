@@ -21,7 +21,6 @@ Animator = Union[BFSAnimator, DFSAnimator]
 
 
 def stop_animation(grid: Grid, animator: Optional[Animator]) -> Optional[Animator]:
-    """Ferma l'animazione corrente e resetta solo lo stato di ricerca (non i muri)."""
     grid.reset_search_state()
     return None
 
@@ -37,12 +36,10 @@ def draw_stats_panel(
     font_title: pygame.font.Font,
     font_body: pygame.font.Font,
 ) -> None:
-    """Disegna un pannello con le statistiche di un algoritmo."""
     panel_rect = pygame.Rect(x, y, width, height)
     pygame.draw.rect(surface, (25, 25, 25), panel_rect)
     pygame.draw.rect(surface, (180, 180, 180), panel_rect, 1)
 
-    # Titolo
     title_surf = font_title.render(title, True, (255, 255, 255))
     surface.blit(title_surf, (x + 10, y + 8))
 
@@ -81,7 +78,6 @@ def main() -> None:
 
     grid = Grid()
 
-    # Un solo animatore in esecuzione, ma due "istanze" per le statistiche
     animator: Optional[Animator] = None
     bfs_animator: Optional[BFSAnimator] = None
     dfs_animator: Optional[DFSAnimator] = None
@@ -90,7 +86,6 @@ def main() -> None:
     font_title = pygame.font.SysFont(None, 22)
     font_body = pygame.font.SysFont(None, 18)
 
-    # Barra superiore: bottoni
     buttons: list[Button] = []
     labels = ["BFS", "DFS", "Generate walls", "Clear walls", "Reset search"]
     button_width = 130
@@ -103,11 +98,9 @@ def main() -> None:
 
     for label in labels:
         rect = pygame.Rect(x, y, button_width, button_height)
-        # uso i colori di default definiti in Button / config
         buttons.append(Button(rect, label))
         x += button_width + spacing
 
-    # Layout pannelli statistiche a destra (sopra il labirinto)
     stats_panel_width = WINDOW_WIDTH - (GRID_LEFT + GRID_WIDTH) - 20  # margine dx
     stats_panel_x = GRID_LEFT + GRID_WIDTH + 10
     stats_panel_height = 140
@@ -119,7 +112,6 @@ def main() -> None:
             if event.type == pygame.QUIT:
                 running = False
 
-            # movimento mouse: aggiornamento hover + drag muri
             elif event.type == pygame.MOUSEMOTION:
                 mouse_pos = event.pos
                 for b in buttons:
@@ -129,12 +121,10 @@ def main() -> None:
                 buttons_state = event.buttons
                 over_button = any(b.rect.collidepoint(mouse_pos) for b in buttons)
 
-                # drag muro solo se tasto sinistro premuto e non siamo sui bottoni
                 if buttons_state[0] and not over_button:
                     animator = stop_animation(grid, animator)
                     grid.transform_to_wall(x_mouse, y_mouse)
 
-            # click sinistro: bottoni o muro
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     mouse_pos = event.pos
@@ -170,18 +160,14 @@ def main() -> None:
                         elif label == "Reset search":
                             animator = stop_animation(grid, animator)
                     else:
-                        # click nel labirinto -> muro
                         animator = stop_animation(grid, animator)
                         grid.transform_to_wall(x_mouse, y_mouse)
 
-        # step dell'animatore corrente
         if animator is not None and not animator.finished:
             animator.step()
 
-        # sfondo
         screen.fill(COLOR_BG)
 
-        # barra superiore UI
         pygame.draw.rect(
             screen,
             COLOR_UI_BG,
@@ -195,14 +181,11 @@ def main() -> None:
             1,
         )
 
-        # disegna bottoni
         for b in buttons:
             b.draw(screen, font_ui, b.text)
 
-        # disegna griglia
         grid.draw(screen)
 
-        # pannello BFS
         draw_stats_panel(
             screen,
             stats_panel_x,
@@ -215,7 +198,6 @@ def main() -> None:
             font_body,
         )
 
-        # pannello DFS
         draw_stats_panel(
             screen,
             stats_panel_x,
