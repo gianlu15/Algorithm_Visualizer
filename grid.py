@@ -7,6 +7,7 @@ from config import (
     CELL_HEIGHT,
     GRID_TOP,
     GRID_LEFT,
+    GRID_WIDTH,
     COLOR_GRID_LINES,
     COLOR_CELL_EMPTY,
     COLOR_CELL_WALL,
@@ -144,6 +145,9 @@ class Grid:
     
     def transform_to_wall(self, x: int, y: int) -> None:
         if y < GRID_TOP:
+            return
+        
+        if x < GRID_LEFT or x >= GRID_LEFT + GRID_WIDTH:
             return
 
         col = (x - GRID_LEFT) // CELL_WIDTH

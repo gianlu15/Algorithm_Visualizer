@@ -1,10 +1,11 @@
 from collections import deque   # double-ended queue
 from typing import Dict, Tuple,  Optional, Set
-
 from grid import Grid
 import time
+
 # Alias
 Coord = Tuple[int, int]
+
 
 class BFSAnimator:
 
@@ -24,9 +25,13 @@ class BFSAnimator:
 
         self.finished: bool = False
         
+        # stats
         self.cell_visited_counter = 0
         self.cell_in_path_counter = 0
-        self.start_time = time.perf_counter()
+        self.start_time: float = 0.0
+        self.elapsed_time: float = 0.0
+        self.found: bool = False 
+
 
 
     def start_search(self) -> None:
@@ -37,9 +42,12 @@ class BFSAnimator:
         self.visited.clear()
         self.parent.clear()
         self.finished = False
+        
         self.cell_visited_counter = 0
         self.cell_in_path_counter = 0
         self.start_time = time.perf_counter()
+        self.elapsed_time = 0.0
+        self.found = False
 
         self.queue.append(self.start)
         self.visited.add(self.start)
@@ -58,6 +66,8 @@ class BFSAnimator:
 
         if not self.queue:
             self.finished = True
+            self.elapsed_time = time.perf_counter() - self.start_time
+            self.found = False
             return
 
         self.cell_visited_counter += 1
@@ -69,12 +79,10 @@ class BFSAnimator:
         current_cell.is_visited = True
 
         if current == self.end:
-            elapsed = time.perf_counter() - self.start_time
-            print(f"Tempo BFS: {elapsed:.4f} secondi")
-            print(self.cell_visited_counter)
             self._reconstruct_path()
-            print(self.cell_in_path_counter)
             self.finished = True
+            self.elapsed_time = time.perf_counter() - self.start_time
+            self.found = True
             return
 
         # find neighbors
@@ -117,10 +125,12 @@ class DFSAnimator:
 
         self.finished: bool = False
         
-        self.cell_visited_counter: int
-        self.cell_in_path_counter: int
-        self.start_time: float
-
+        # stats
+        self.cell_visited_counter = 0
+        self.cell_in_path_counter = 0
+        self.start_time: float = 0.0
+        self.elapsed_time: float = 0.0
+        self.found: bool = False 
 
 
     def start_search(self) -> None:
@@ -131,10 +141,13 @@ class DFSAnimator:
         self.visited.clear()
         self.parent.clear()
         self.finished = False
+        
         self.cell_visited_counter = 0
         self.cell_in_path_counter = 0
         self.start_time = time.perf_counter()
-
+        self.elapsed_time = 0.0
+        self.found = False
+        
         self.queue.append(self.start)
         self.visited.add(self.start)
         self.parent[self.start] = None
@@ -153,6 +166,8 @@ class DFSAnimator:
 
         if not self.queue:
             self.finished = True
+            self.elapsed_time = time.perf_counter() - self.start_time
+            self.found = False
             return
            
         self.cell_visited_counter += 1
@@ -164,12 +179,10 @@ class DFSAnimator:
         current_cell.is_visited = True
 
         if current == self.end:
-            elapsed = time.perf_counter() - self.start_time
-            print(f"Tempo BFS: {elapsed:.4f} secondi")
-            print(self.cell_visited_counter)
             self._reconstruct_path()
-            print(self.cell_in_path_counter)
             self.finished = True
+            self.elapsed_time = time.perf_counter() - self.start_time
+            self.found = True
             return
 
         # find neighbors

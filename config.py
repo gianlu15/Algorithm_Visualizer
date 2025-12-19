@@ -1,5 +1,5 @@
 # window dimension
-WINDOW_WIDTH = 800
+WINDOW_WIDTH  = 1100  
 WINDOW_HEIGHT = 800
 
 # UI panel dimension
@@ -8,7 +8,7 @@ UI_PANEL_HEIGHT = 70
 # grid position and dimension
 GRID_TOP = UI_PANEL_HEIGHT
 GRID_LEFT = 0
-GRID_WIDTH = WINDOW_WIDTH
+GRID_WIDTH = 800
 GRID_HEIGHT = WINDOW_HEIGHT - UI_PANEL_HEIGHT
 
 # grid dimension
