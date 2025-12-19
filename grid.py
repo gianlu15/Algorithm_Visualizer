@@ -131,7 +131,7 @@ class Grid:
     # find neighbors (up/down/right/left) which are not walls
     def neighbors(self, r: int, c: int) -> List[Tuple[int, int]]:
         result: List[Tuple[int, int]] = []
-        directions = [(0, 1), (1, 0), (-1, 0), (0, -1)]
+        directions = [(1, 0), (0, -1), (0, 1), (-1, 0)]
 
         for dr, dc in directions:
             nr, nc = r + dr, c + dc

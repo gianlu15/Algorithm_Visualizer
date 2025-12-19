@@ -2,7 +2,7 @@ from collections import deque   # double-ended queue
 from typing import Dict, Tuple,  Optional, Set
 
 from grid import Grid
-
+import time
 # Alias
 Coord = Tuple[int, int]
 
@@ -23,7 +23,10 @@ class BFSAnimator:
         self.parent: Dict[Coord, Optional[Coord]] = {}
 
         self.finished: bool = False
-
+        
+        self.cell_visited_counter = 0
+        self.cell_in_path_counter = 0
+        self.start_time = time.perf_counter()
 
 
     def start_search(self) -> None:
@@ -34,6 +37,9 @@ class BFSAnimator:
         self.visited.clear()
         self.parent.clear()
         self.finished = False
+        self.cell_visited_counter = 0
+        self.cell_in_path_counter = 0
+        self.start_time = time.perf_counter()
 
         self.queue.append(self.start)
         self.visited.add(self.start)
@@ -54,6 +60,7 @@ class BFSAnimator:
             self.finished = True
             return
 
+        self.cell_visited_counter += 1
         current = self.queue.popleft()
         current_row, current_column = current
         current_cell = self.grid.cells[current_row][current_column]
@@ -62,7 +69,11 @@ class BFSAnimator:
         current_cell.is_visited = True
 
         if current == self.end:
+            elapsed = time.perf_counter() - self.start_time
+            print(f"Tempo BFS: {elapsed:.4f} secondi")
+            print(self.cell_visited_counter)
             self._reconstruct_path()
+            print(self.cell_in_path_counter)
             self.finished = True
             return
 
@@ -85,6 +96,7 @@ class BFSAnimator:
             cell = self.grid.cells[r][c]
             cell.in_path = True
             cur = self.parent.get(cur)
+            self.cell_in_path_counter += 1
             
             
 class DFSAnimator:
@@ -104,6 +116,10 @@ class DFSAnimator:
         self.parent: Dict[Coord, Optional[Coord]] = {}
 
         self.finished: bool = False
+        
+        self.cell_visited_counter: int
+        self.cell_in_path_counter: int
+        self.start_time: float
 
 
 
@@ -115,6 +131,9 @@ class DFSAnimator:
         self.visited.clear()
         self.parent.clear()
         self.finished = False
+        self.cell_visited_counter = 0
+        self.cell_in_path_counter = 0
+        self.start_time = time.perf_counter()
 
         self.queue.append(self.start)
         self.visited.add(self.start)
@@ -128,13 +147,15 @@ class DFSAnimator:
 
 
     def step(self) -> None:
+        
         if self.finished:
             return
 
         if not self.queue:
             self.finished = True
             return
-
+           
+        self.cell_visited_counter += 1
         current = self.queue.pop()
         current_row, current_column = current
         current_cell = self.grid.cells[current_row][current_column]
@@ -143,7 +164,11 @@ class DFSAnimator:
         current_cell.is_visited = True
 
         if current == self.end:
+            elapsed = time.perf_counter() - self.start_time
+            print(f"Tempo BFS: {elapsed:.4f} secondi")
+            print(self.cell_visited_counter)
             self._reconstruct_path()
+            print(self.cell_in_path_counter)
             self.finished = True
             return
 
@@ -166,3 +191,4 @@ class DFSAnimator:
             cell = self.grid.cells[r][c]
             cell.in_path = True
             cur = self.parent.get(cur)
+            self.cell_in_path_counter += 1
