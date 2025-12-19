@@ -55,8 +55,8 @@ This project lets you visually compare BFS and DFS on the same maze: how they ex
 ### Clone the repository
 
 ```bash
-git clone <your-repo-url>
-cd <your-repo-folder>
+git clone https://github.com/gianlu15/BFS_DFS_maze_solver.git
+cd BFS_DFS_maze_solver
 ```
 
 ### Install dependencies
