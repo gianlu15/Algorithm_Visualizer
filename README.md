@@ -3,6 +3,8 @@
 An interactive maze visualizer written in Python and Pygame.  
 You can draw walls, generate random mazes, and see how **Breadth-First Search (BFS)** and **Depth-First Search (DFS)** explore the grid and find a path from a start cell to an end cell.
 
+![BFS / DFS Maze Solver demo](assets/demo.gif)
+
 ---
 
 ## What are BFS and DFS?
